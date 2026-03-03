@@ -1,32 +1,59 @@
 import java.util.*;
 
-public class BannerApp {
-    
-    // Map to store character patterns
-    private static final Map<Character, String[]> charMap = new HashMap<>();
-    
-    static {
-        charMap.put('O', new String[]{
+// Base class for character patterns
+abstract class CharPattern {
+    public abstract String[] getPattern();
+}
+
+// Specific character classes
+class OPattern extends CharPattern {
+    @Override
+    public String[] getPattern() {
+        return new String[]{
             " *** ",
             "*   *",
             "*   *",
             "*   *",
             " *** "
-        });
-        charMap.put('P', new String[]{
+        };
+    }
+}
+
+class PPattern extends CharPattern {
+    @Override
+    public String[] getPattern() {
+        return new String[]{
             "**** ",
             "*   *",
             "**** ",
             "*    ",
             "*    "
-        });
-        charMap.put('S', new String[]{
+        };
+    }
+}
+
+class SPattern extends CharPattern {
+    @Override
+    public String[] getPattern() {
+        return new String[]{
             " ****",
             "*    ",
             " *** ",
             "    *",
             "**** "
-        });
+        };
+    }
+}
+
+public class OOPSBannerApp {
+    
+    // Map to store character classes
+    private static final Map<Character, CharPattern> charMap = new HashMap<>();
+    
+    static {
+        charMap.put('O', new OPattern());
+        charMap.put('P', new PPattern());
+        charMap.put('S', new SPattern());
     }
     
     // Function to render a word
@@ -35,14 +62,18 @@ public class BannerApp {
         for (int row = 0; row < 5; row++) {
             StringBuilder line = new StringBuilder();
             for (char ch : word.toCharArray()) {
-                String[] pattern = charMap.getOrDefault(ch, new String[]{"     ","     ","     ","     ","     "});
-                line.append(pattern[row]).append("  "); // spacing between letters
+                CharPattern cp = charMap.get(ch);
+                if (cp != null) {
+                    line.append(cp.getPattern()[row]).append("  ");
+                } else {
+                    line.append("     ").append("  "); // blank for unsupported chars
+                }
             }
             System.out.println(line);
         }
     }
     
     public static void main(String[] args) {
-        renderWord("OOPS");
+        renderWord("OOPS"); // double O included
     }
 }
